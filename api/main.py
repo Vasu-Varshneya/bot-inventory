@@ -9,10 +9,18 @@ from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
 from langchain.schema import HumanMessage, SystemMessage
 
 # Load env (Hugging Face API key)
+from fastapi.middleware.cors import CORSMiddleware
 load_dotenv()
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # you can restrict to ["http://localhost:5173", "https://your-frontend.vercel.app"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # LLM Setup (GPT-OSS 20B)
 llm = HuggingFaceEndpoint(
     repo_id="openai/gpt-oss-20b",
