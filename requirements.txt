@@ -4,3 +4,4 @@ pydantic
 mysql-connector-python
 python-dotenv
 langchain-huggingface
+langchain
