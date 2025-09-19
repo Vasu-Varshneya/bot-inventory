@@ -59,7 +59,8 @@ def chat(req: ChatRequest):
             "Only generate SELECT queries on the 'products' table. "
             "The table schema is:\n"
             "products(product_id INT, name VARCHAR, description TEXT, sku VARCHAR, unit_price DECIMAL, reorder_level INT, category_id INT). "
-            "Never guess column names. Always use only these columns."
+            "Never guess column names. Always use only these columns.Also user can ask anything related to products table like give me the product by its product_id so you should give him query of SELECT name from products where product_id='7'-eg." \
+            "He can ask anything related to the products schema. For eg give me the name of product whose id is this or give me the quantity of the particular product.Use the schema and generate appropriate SQL query"
         )
     )
 
@@ -94,7 +95,7 @@ def chat(req: ChatRequest):
     # 5️⃣ Explanation in plain English
     explain_prompt = HumanMessage(
         content=f"User asked: {user_query}\nSQL: {sql_candidate}\nResults: {result}\n"
-                f"Explain this in plain English for a layman."
+                f"Explain this in like chat gpt should explain"
     )
     explanation = model([SystemMessage(content="You are a helpful assistant."), explain_prompt])
 
@@ -104,17 +105,16 @@ def chat(req: ChatRequest):
     else:
         if len(columns) == 1:
             values = [str(r[columns[0]]) for r in result]
-            answer_text = "Here’s what I found:\n" + "\n".join([f"- {v}" for v in values])
+            answer_text = "\n".join([f"- {v}" for v in values])
         else:
             lines = []
             for row in result:
                 row_str = ", ".join(f"{k}: {v}" for k, v in row.items())
                 lines.append(f"- {row_str}")
-            answer_text = "Here’s what I found:\n" + "\n".join(lines)
-
+            answer_text =  "\n".join(lines)
     return {
         "sql": sql_candidate,
         "raw_result": result,
         "reply": explanation.content,  # Layman explanation
-        "answer": answer_text          # Clean conversational text
+        "answer": answer_text         # Clean conversational text
     }
