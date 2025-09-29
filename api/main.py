@@ -85,7 +85,6 @@ def chat(req: ChatRequest):
 
     # 1) Build SQL prompt with short-term memory (arrays)
     history = get_history(session_id)
-
     sql_messages: List = []
     # include last turns as context (helps follow-ups)
     for role, content in history:
@@ -142,7 +141,8 @@ def chat(req: ChatRequest):
             "You are a helpful assistant.\n"
             "Reply in clear, friendly English (one short paragraph only).\n"
             "Summarize the result for a non-technical user. If no rows, give helpful next steps.\n"
-            "Do NOT include SQL unless asked.After giving the relevent name, do not generate anymore text like do not write if you are looking for further details etc."
+            "Do NOT include SQL unless asked.After giving the relevent name, do not generate anymore text like do not write if you are looking for further details etc." \
+            "Also do not give response to any query which is not related to inventories. for eg-you should not give answer of 3+4=7 etc."
         )),
         HumanMessage(content=(
             f"User asked: {user_query}\n"
